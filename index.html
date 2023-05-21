@@ -12,8 +12,8 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #6441a5;
-            color: #fff;
+            background-color: #000;
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .container {
@@ -42,13 +42,19 @@
 
         textarea {
             width: 100%;
-            height: 100%;
+            height: calc(100% - 40px);
             resize: none;
-            background-color: #f0f0f0;
-            color: #000;
+            background-color: #000;
+            color: rgba(255, 255, 255, 0.7);
             padding: 10px;
             border: none;
             font-size: 16px;
+            outline: none;
+            overflow-y: auto;
+        }
+
+        .highlight {
+            background-color: #555;
         }
 
         /* Media queries for responsiveness */
@@ -61,7 +67,7 @@
 </head>
 <body>
     <div class="container">
-        <textarea id="editor" placeholder="Write your notes here..."></textarea>
+        <textarea id="editor" placeholder="Write the title of the file here and hit Enter to start the text" oninput="highlightCurrentLine()"></textarea>
         <div>
             <button class="btn" onclick="downloadText()">Download as .txt</button>
             <button class="btn" onclick="downloadPDF()">Download as PDF</button>
@@ -74,7 +80,7 @@
             var text = document.getElementById('editor').value;
             var element = document.createElement('a');
             element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-            element.setAttribute('download', 'notepad.txt');
+            element.setAttribute('download', getFilename(text) + '.txt');
             element.style.display = 'none';
             document.body.appendChild(element);
             element.click();
@@ -92,11 +98,33 @@
             var url = URL.createObjectURL(blob);
             var element = document.createElement('a');
             element.setAttribute('href', url);
-            element.setAttribute('download', 'notepad.pdf');
+            element.setAttribute('download', getFilename(text) + '.pdf');
             element.style.display = 'none';
             document.body.appendChild(element);
             element.click();
             document.body.removeChild(element);
+        }
+
+        // Get the filename from the first line of the text
+        function getFilename(text) {
+            var lines = text.split('\n');
+            var firstLine = lines[0].trim();
+            return firstLine || 'notepad';
+        }
+
+        // Highlight the current line in the text box
+        function highlightCurrentLine() {
+            var editor = document.getElementById('editor');
+            var lineNumber = editor.value.substr(0, editor.selectionStart).split('\n').length;
+            var lines = editor.value.split('\n');
+            
+            // Remove existing highlights
+            for (var i = 0; i < lines.length; i++) {
+                editor.rows[i].classList.remove('highlight');
+            }
+            
+            // Highlight the current line
+            editor.rows[lineNumber - 1].classList.add('highlight');
         }
 
         // Load the previously saved content from localStorage
@@ -105,6 +133,7 @@
             if (savedText) {
                 document.getElementById('editor').value = savedText;
             }
+            highlightCurrentLine(); // Highlight the current line on load
         };
     </script>
 </body>
