@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Notepad Web App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #333;
+            color: #fff;
+        }
+        .container {
+            width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #222;
+        }
+        .btn {
+            padding: 8px 12px;
+            background-color: #555;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background-color: #777;
+        }
+        textarea {
+            width: 100%;
+            height: 400px;
+            background-color: #111;
+            color: #fff;
+            padding: 10px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Notepad Web App</h1>
+        <button class="btn" onclick="saveText()">Save</button>
+        <button class="btn" onclick="exportToPDF()">Export as PDF</button>
+        <button class="btn" onclick="toggleTheme()">Toggle Theme</button>
+        <textarea id="editor" placeholder="Write your notes here..."></textarea>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.0/marked.min.js"></script>
+    <script>
+        // Function to save the text to localStorage
+        function saveText() {
+            var text = document.getElementById('editor').value;
+            localStorage.setItem('notepad_content', text);
+        }
+
+        // Function to export the text as a PDF
+        function exportToPDF() {
+            var text = document.getElementById('editor').value;
+            // Use your Python code here to generate a PDF from the text
+            // and save it to a file or provide a download link.
+            // You can use libraries like PyFPDF, pdfkit, etc. for PDF generation.
+        }
+
+        // Function to toggle between light and dark themes
+        function toggleTheme() {
+            var body = document.body;
+            body.classList.toggle('markdown-body');
+        }
+
+        // Load the previously saved content from localStorage
+        window.onload = function() {
+            var savedText = localStorage.getItem('notepad_content');
+            if (savedText) {
+                document.getElementById('editor').value = savedText;
+            }
+        };
+    </script>
+</body>
+</html>
