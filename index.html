@@ -72,9 +72,8 @@
     <div class="container">
         <h1>Notepad Web App</h1>
         <textarea id="editor" placeholder="Write your notes here..."></textarea>
-        <button class="btn" onclick="downloadText()">Download as .txt</button> <!-- Changed the button text to "Download as .txt" -->
+        <button class="btn" onclick="downloadText()">Download</button> <!-- Changed the button text to "Download as .txt" -->
         <button class="btn" onclick="exportToPDF()">Export as PDF</button>
-        <button class="btn" onclick="toggleTheme()">Toggle Theme</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.0/marked.min.js"></script>
@@ -97,13 +96,6 @@
             // Use your Python code here to generate a PDF from the text
             // and save it to a file or provide a download link.
             // You can use libraries like PyFPDF, pdfkit, etc. for PDF generation.
-        }
-
-        // Function to toggle between light and dark themes
-        function toggleTheme() {
-            var body = document.body;
-            body.classList.toggle('dark-theme');
-        }
 
         // Load the previously saved content from localStorage
         window.onload = function() {
