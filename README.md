@@ -1,4 +1,4 @@
-# Notepad
-##Notepad app with PDF export and Markdown support
-### Made by Netphoria
+# __Notepad__
+## Notepad app with PDF _export_ and Markdown support
+### _Made_ by __Netphoria__
 ### version 1.0.0
