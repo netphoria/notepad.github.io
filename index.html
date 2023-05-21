@@ -40,6 +40,17 @@
             background-color: #ad66ff;
         }
 
+        .word-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
         textarea {
             width: 100%;
             height: calc(100% - 40px);
@@ -67,12 +78,12 @@
 </head>
 <body>
     <div class="container">
-        <textarea id="editor" placeholder="Write the title of the file here and hit Enter to start the text" oninput="highlightCurrentLine()"></textarea>
+        <textarea id="editor" placeholder="Write the title of the file here and hit Enter to start the text" oninput="highlightCurrentLine(); updateWordCounter()"></textarea>
         <div>
             <button class="btn" onclick="downloadText()">Download as .txt</button>
-            <button class="btn" onclick="downloadPDF()">Download as PDF</button>
         </div>
     </div>
+    <div id="wordCounter" class="word-counter"></div>
 
     <script>
         // Function to download the text as a .txt file
@@ -81,24 +92,6 @@
             var element = document.createElement('a');
             element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
             element.setAttribute('download', getFilename(text) + '.txt');
-            element.style.display = 'none';
-            document.body.appendChild(element);
-            element.click();
-            document.body.removeChild(element);
-        }
-
-        // Function to download the text as a PDF file
-        function downloadPDF() {
-            var text = document.getElementById('editor').value;
-            // Use your Python code here to generate a PDF from the text
-            // and provide a download link to the user.
-            // You can use libraries like PyFPDF, pdfkit, etc. for PDF generation.
-            // For example, you can create a Blob object and create a download link for it.
-            var blob = new Blob([text], {type: 'application/pdf'});
-            var url = URL.createObjectURL(blob);
-            var element = document.createElement('a');
-            element.setAttribute('href', url);
-            element.setAttribute('download', getFilename(text) + '.pdf');
             element.style.display = 'none';
             document.body.appendChild(element);
             element.click();
@@ -127,11 +120,20 @@
             editor.rows[lineNumber - 1].classList.add('highlight');
         }
 
+        // Update the word counter
+        function updateWordCounter() {
+            var text = document.getElementById('editor').value;
+            var words = text.trim().split(/\s+/).length;
+            var wordCounter = document.getElementById('wordCounter');
+            wordCounter.textContent = 'Words: ' + words;
+        }
+
         // Load the previously saved content from localStorage
         window.onload = function() {
             var savedText = localStorage.getItem('notepad_content');
             if (savedText) {
                 document.getElementById('editor').value = savedText;
+                updateWordCounter();
             }
             highlightCurrentLine(); // Highlight the current line on load
         };
