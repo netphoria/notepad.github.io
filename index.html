@@ -40,17 +40,6 @@
             background-color: #ad66ff;
         }
 
-        .word-counter {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
         textarea {
             width: 100%;
             height: calc(100% - 40px);
@@ -78,20 +67,17 @@
 </head>
 <body>
     <div class="container">
-        <textarea id="editor" placeholder="Write the title of the file here and hit Enter to start the text" oninput="highlightCurrentLine(); updateWordCounter()"></textarea>
-        <div>
-            <button class="btn" onclick="downloadText()">Download as .txt</button>
-        </div>
+        <textarea id="editor" placeholder="Write the title of the file here and hit Enter to start the text" oninput="highlightCurrentLine()"></textarea>
+        <button class="btn" onclick="downloadText()">Download as .txt</button>
     </div>
-    <div id="wordCounter" class="word-counter"></div>
 
     <script>
         // Function to download the text as a .txt file
         function downloadText() {
             var text = document.getElementById('editor').value;
             var element = document.createElement('a');
-            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-            element.setAttribute('download', getFilename(text) + '.txt');
+            element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+            element.download = getFilename(text) + '.txt';
             element.style.display = 'none';
             document.body.appendChild(element);
             element.click();
@@ -100,32 +86,15 @@
 
         // Get the filename from the first line of the text
         function getFilename(text) {
-            var lines = text.split('\n');
-            var firstLine = lines[0].trim();
-            return firstLine || 'notepad';
+            return text.trim().split('\n')[0].trim() || 'notepad';
         }
 
         // Highlight the current line in the text box
         function highlightCurrentLine() {
             var editor = document.getElementById('editor');
             var lineNumber = editor.value.substr(0, editor.selectionStart).split('\n').length;
-            var lines = editor.value.split('\n');
-            
-            // Remove existing highlights
-            for (var i = 0; i < lines.length; i++) {
-                editor.rows[i].classList.remove('highlight');
-            }
-            
-            // Highlight the current line
+            editor.rows.forEach(row => row.classList.remove('highlight'));
             editor.rows[lineNumber - 1].classList.add('highlight');
-        }
-
-        // Update the word counter
-        function updateWordCounter() {
-            var text = document.getElementById('editor').value;
-            var words = text.trim().split(/\s+/).length;
-            var wordCounter = document.getElementById('wordCounter');
-            wordCounter.textContent = 'Words: ' + words;
         }
 
         // Load the previously saved content from localStorage
@@ -133,7 +102,6 @@
             var savedText = localStorage.getItem('notepad_content');
             if (savedText) {
                 document.getElementById('editor').value = savedText;
-                updateWordCounter();
             }
             highlightCurrentLine(); // Highlight the current line on load
         };
