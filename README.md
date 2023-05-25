@@ -1,4 +1,4 @@
 # __Notepad__
-## Notepad app with Markdown support
+## Notepad app
 ### _Made_ by __Netphoria__
 ### version 1.0.0
