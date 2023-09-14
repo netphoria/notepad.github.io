@@ -63,12 +63,32 @@
                 padding: 10px;
             }
         }
+        
+        /* Affiliate banner styles */
+        .affiliate-banner {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 160px; /* Adjust the width as needed */
+            height: 100vh;
+            background-color: #fff; /* Background color of the banner */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <textarea id="editor" placeholder="Write the title of the file here and hit Enter to start the text" oninput="highlightCurrentLine()"></textarea>
         <button class="btn" onclick="downloadText()">Download as .txt</button>
+    </div>
+
+    <!-- Affiliate banner code -->
+    <div class="affiliate-banner">
+        <a href="https://go.nordvpn.net/aff_c?offer_id=15&aff_id=92507&file_id=29" target="_blank">
+            <img src="https://media.go2speed.org/brand/files/nordvpn/15/160x600a111.gif" width="160" height="600" border="0" />
+        </a>
     </div>
 
     <script>
@@ -106,11 +126,5 @@
             highlightCurrentLine(); // Highlight the current line on load
         };
     </script>
-    <footer>
-    <a href="https://go.nordvpn.net/aff_c?offer_id=15&aff_id=92507&file_id=29" target="_blank">
-        <img src="https://media.go2speed.org/brand/files/nordvpn/15/160x600a111.gif" width="160" height="600" border="0" />
-    </a>
-    <img src="https://go.nordvpn.net/aff_i?offer_id=15&file_id=29&aff_id=92507" width="0" height="0" style="position:absolute;visibility:hidden;" border="0" />
-</footer>
 </body>
 </html>
