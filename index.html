@@ -57,30 +57,37 @@
             background-color: #555;
         }
 
-        /* Media queries for responsiveness */
-        @media only screen and (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
-        }
-        
-        /* Affiliate banner styles */
-        .affiliate-banner {
-            position: absolute;
+        /* Banner styles */
+        .banner-container {
+            width: 160px; /* Width of the banner image */
+            height: 600px; /* Height of the banner image */
+            position: fixed;
             top: 0;
             right: 0;
-            width: 160px; /* Adjust the width as needed */
-            height: 100vh;
-            background-color: #fff; /* Background color of the banner */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: #fff; /* Set background color for the banner */
+            z-index: 1000; /* Ensure banner is on top of other content */
+            display: none; /* Initially hide the banner */
         }
 
-        /* Added styles for the banner image */
-        .affiliate-banner img {
-            max-width: 100%;
-            height: auto;
+        .banner-image {
+            width: 100%;
+            height: 100%;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            background-color: #ff4757;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            font-size: 14px;
+        }
+
+        .close-button:hover {
+            background-color: #ff6b81;
         }
     </style>
 </head>
@@ -90,11 +97,11 @@
         <button class="btn" onclick="downloadText()">Download as .txt</button>
     </div>
 
-    <!-- Affiliate banner code -->
-    <div class="affiliate-banner">
-        <a href="https://go.nordvpn.net/aff_c?offer_id=15&aff_id=92507&file_id=29" target="_blank">
-            <img src="https://media.go2speed.org/brand/files/nordvpn/15/160x600a111.gif" alt="NordVPN Banner" width="160" height="600" border="0" />
-        </a>
+    <!-- Banner container -->
+    <div class="banner-container" id="banner">
+        <img src="https://media.go2speed.org/brand/files/nordvpn/15/160x600a111.gif" class="banner-image" alt="Banner Image">
+        <button class="close-button" onclick="closeBanner()">Close</button>
+        <button class="btn" onclick="openBanner()">Open Banner</button>
     </div>
 
     <script>
@@ -131,6 +138,18 @@
             }
             highlightCurrentLine(); // Highlight the current line on load
         };
+
+        // Function to close the banner
+        function closeBanner() {
+            var banner = document.getElementById('banner');
+            banner.style.display = 'none';
+        }
+
+        // Function to open the banner
+        function openBanner() {
+            var banner = document.getElementById('banner');
+            banner.style.display = 'block';
+        }
     </script>
 </body>
 </html>
