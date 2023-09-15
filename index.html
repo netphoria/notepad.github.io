@@ -1,229 +1,180 @@
+
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta http-equiv="cache-control" content="no-cache">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="-1">
-    <style type="text/css"></style>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="https://i.imgur.com/LgljRO8.png" type="image/png">
-    <!-- Specify the URL of your icon image here -->
-    <title>Markdown Editor</title>
+    <meta charset="utf-8">
+    <title>Notepad Web App</title>
     <style>
-        /* CSS styles */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Source Sans Pro', Arial, sans-serif;
-            /* Include Arial in the font stack */
             margin: 0;
             padding: 0;
-            background-color: #333;
-            /* Dark mode background color */
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-start;
+            padding: 20px;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            background-color: #9147ff;
             color: #fff;
-            /* Dark mode text color */
-        }
-
-        header {
-            background-color: #222;
-            /* Dark mode header background color */
-            padding: 5px;
-            text-align: right;
-        }
-
-        .menu {
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
             margin-top: 10px;
         }
 
-        .menu-item {
-            font-family: Arial, sans-serif;
-            /* Use Arial font */
-            font-size: 12px;
-            margin-right: 10px;
-            cursor: pointer;
-            color: #fff;
-            /* Default text color */
-            transition: color 0.3s;
+        .btn:hover {
+            background-color: #ad66ff;
         }
 
-        .menu-item:hover {
-            color: #00bcd4;
-            /* Highlight text color on hover */
-        }
-
-        #editor-container {
-            display: flex;
-            height: 100vh;
-        }
-
-        #editor,
-        #preview {
-            flex: 1;
-            height: 100%;
+        textarea {
+            width: 100%;
+            height: calc(100% - 40px);
+            resize: none;
+            background-color: #000;
+            color: rgba(255, 255, 255, 0.7);
             padding: 10px;
             border: none;
-            outline: none;
-            font-family: 'Source Sans Pro', Arial, sans-serif;
-        }
-
-        #editor {
             font-size: 16px;
-            background-color: #444;
-            /* Dark mode editor background color */
-            color: #fff;
-            /* Dark mode editor text color */
-            resize: none;
+            outline: none;
+            overflow-y: auto;
         }
 
-        #preview {
-            font-size: 14px;
+        .highlight {
             background-color: #555;
-            /* Dark mode preview background color */
-            overflow-y: auto;
+        }
+
+        /* Menu styles */
+        .menu {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1001;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .menu-item {
             color: #fff;
-            /* Dark mode preview text color */
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        /* Banner styles */
+        .banner-container {
+            width: 160px;
+            height: 600px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            background-color: #fff;
+            z-index: 1000;
+            display: none;
+        }
+
+        .banner-image {
+            width: 100%;
+            height: 100%;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            background-color: #ff4757;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            font-size: 14px;
+        }
+
+        .close-button:hover {
+            background-color: #ff6b81;
         }
     </style>
 </head>
-
 <body>
-    <header>
-        <nav class="menu">
-            <span class="menu-item" id="copy">Copy</span>
-            <span class="menu-item" id="reset">Reset</span>
-            <span class="menu-item" id="export-pdf">Export PDF</span>
-            <a class="menu-item" id="affiliate-link" href="https://go.nordvpn.net/aff_c?offer_id=15&aff_id=92507" target="_blank">Get NordVPN</a>
-        </nav>
-    </header>
-
-    <div id="editor-container">
-        <textarea id="editor" placeholder="Type your Markdown here..."></textarea>
-        <div id="preview"></div>
+    <div class="container">
+        <textarea id="editor" placeholder="Write the title of the file here and hit Enter to start the text" oninput="highlightCurrentLine()"></textarea>
+        <button class="btn" onclick="downloadText()">Download as .txt</button>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
+    <!-- Menu -->
+    <div class="menu">
+        <span class="menu-item" onclick="openBanner()">Show Banner</span>
+        <span class="menu-item" onclick="closeBanner()">Hide Banner</span>
+        <a href="#" id="affiliateLink" target="_blank">Get NordVPN</a>
+    </div>
+
+    <!-- Banner container -->
+    <div class="banner-container" id="banner">
+        <img src="https://media.go2speed.org/brand/files/nordvpn/15/160x600a111.gif" class="banner-image" alt="Banner Image">
+        <button class="close-button" onclick="closeBanner()">Close</button>
+    </div>
+
     <script>
-        // JavaScript code
-        document.addEventListener("DOMContentLoaded", function () {
-            const editor = document.getElementById("editor");
-            const output = document.getElementById("preview");
-
-            // Function to update the preview
-            function updatePreview() {
-                // Get the Markdown text from the textarea
-                const markdownText = editor.value;
-
-                // Convert Markdown to HTML
-                const converter = new showdown.Converter();
-                const htmlText = converter.makeHtml(markdownText);
-
-                // Update the HTML of the preview div
-                output.innerHTML = htmlText;
-            }
-
-            // Event listeners for input changes
-            editor.addEventListener("input", updatePreview);
-
-            // Initialize the preview
-            updatePreview();
-
-            // Event listener for download menu item click
-            document.getElementById("download").addEventListener("click", function () {
-                const markdownText = editor.value;
-                const blob = new Blob([markdownText], { type: "text/markdown" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "markdown.md";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            });
-
-            // Event listener for copy menu item click
-            document.getElementById("copy").addEventListener("click", function () {
-                editor.select();
-                document.execCommand("copy");
-            });
-
-            // Event listener for reset menu item click
-            document.getElementById("reset").addEventListener("click", function () {
-                editor.value = "";
-                updatePreview();
-            });
-        });
-    </script>
-    <script>
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("service-worker.js")
-                .then(function (registration) {
-                    console.log("Service Worker registered with scope:", registration.scope);
-                })
-                .catch(function (error) {
-                    console.error("Service Worker registration failed:", error);
-                });
+        // Function to download the text as a .txt file
+        function downloadText() {
+            var text = document.getElementById('editor').value;
+            var element = document.createElement('a');
+            element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+            element.download = getFilename(text) + '.txt';
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
         }
 
-        // JavaScript code
-        document.addEventListener("DOMContentLoaded", function () {
-            const editor = document.getElementById("editor");
-            const output = document.getElementById("preview");
+        // Get the filename from the first line of the text
+        function getFilename(text) {
+            return text.trim().split('\n')[0].trim() || 'notepad';
+        }
 
-            // Function to update the preview
-            function updatePreview() {
-                // Get the Markdown text from the textarea
-                const markdownText = editor.value;
+        // Highlight the current line in the text box
+        function highlightCurrentLine() {
+            var editor = document.getElementById('editor');
+            var lineNumber = editor.value.substr(0, editor.selectionStart).split('\n').length;
+            editor.rows.forEach(row => row.classList.remove('highlight'));
+            editor.rows[lineNumber - 1].classList.add('highlight');
+        }
 
-                // Convert Markdown to HTML
-                const converter = new showdown.Converter();
-                const htmlText = converter.makeHtml(markdownText);
-
-                // Update the HTML of the preview div
-                output.innerHTML = htmlText;
+        // Load the previously saved content from localStorage
+        window.onload = function() {
+            var savedText = localStorage.getItem('notepad_content');
+            if (savedText) {
+                document.getElementById('editor').value = savedText;
             }
+            highlightCurrentLine(); // Highlight the current line on load
+        };
 
-            // Event listeners for input changes
-            editor.addEventListener("input", updatePreview);
+        // Function to close the banner
+        function closeBanner() {
+            var banner = document.getElementById('banner');
+            banner.style.display = 'none';
+        }
 
-            // Initialize the preview
-            updatePreview();
-
-            // Event listener for "Export to PDF" menu item click
-            document.getElementById("export-pdf").addEventListener("click", function () {
-                // Open the browser's print dialog to save as PDF
-                window.print();
-            });
-
-            // Event listener for "Download" menu item click
-            document.getElementById("download").addEventListener("click", function () {
-                const markdownText = editor.value;
-                const blob = new Blob([markdownText], { type: "text/markdown" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "markdown.md";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            });
-
-            // Event listener for "Copy" menu item click
-            document.getElementById("copy").addEventListener("click", function () {
-                editor.select();
-                document.execCommand("copy");
-            });
-
-            // Event listener for "Reset" menu item click
-            document.getElementById("reset").addEventListener("click", function () {
-                editor.value = "";
-                updatePreview();
-            });
-        });
+        // Function to open the banner
+        function openBanner() {
+            var banner = document.getElementById('banner');
+            banner.style.display = 'block';
+        }
     </script>
 </body>
-
 </html>
